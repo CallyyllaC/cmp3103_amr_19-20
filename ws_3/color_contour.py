@@ -69,7 +69,7 @@ class colorContour():
 
 	def color_slice(self, cam_view):
 		hsv = cv2.cvtColor(cam_view, cv2.COLOR_BGR2HSV)
-		lower_blue = np.array([, 100, 100]) # HSV not RGB
+		lower_blue = np.array([100, 100, 100]) # HSV not RGB
 		upper_blue = np.array([255, 255, 250])
 		mask = cv2.inRange(hsv, lower_blue, upper_blue)
 		masked = cv2.bitwise_and(self.cam_view, self.cam_view, mask=mask)
