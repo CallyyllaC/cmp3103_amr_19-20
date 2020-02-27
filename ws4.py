@@ -1,23 +1,19 @@
-#https://wiki.ros.org/Robots/TIAGo/Tutorials/motions/cmd_vel
-
 import rospy
 import math
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float32
  
-wheel_radius = 0.06
-robot_radius = 0.2
+wheel_radius = 0.03
+robot_radius = 0.16 
 
-cmd_v = [0.1, 0.6]
-pub = rospy.Publisher("cmd_vel", Twist, queue_size = 10)
+pub = rospy.Publisher("/cmd_vel_mux/input/teleop", Twist, queue_size = 1)
 
 def callback(data):
-    print "callback start"
     (v, a) = forward_kinematics(data.data, 0)
 
     t = Twist()
-    t.linear.x = v * cmd_v[0]
-    t.angular.y = a * cmd_v[1]
+    t.linear.x = v
+    t.angular.z = a
     pub.publish(t)
 
     #get the input we need
@@ -32,12 +28,9 @@ def callback(data):
     print "w_l = %f,\tw_r = %f" % (w_l, w_r)
 
 def listener():
-    print "listener start"
     rospy.Subscriber("/wheel_vel_left", Float32, callback)
 
-    print "listener spinning"
     rospy.spin()
-    print "listener end"
 
  # computing the forward kinematics for a differential drive
 def forward_kinematics(w_l, w_r):
@@ -59,6 +52,6 @@ def inverse_kinematics(v, a):
 def inverse_kinematics_from_twist(t):
     return inverse_kinematics(t.linear.x, t.angular.z)
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     rospy.init_node('workshop4', anonymous=True)
     listener()
